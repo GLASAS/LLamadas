@@ -2,386 +2,468 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sistema de Llamadas</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); max-width: 450px; width: 100%; position: relative; }
-        h1 { color: #333; margin-bottom: 10px; text-align: center; font-size: 20px; line-height: 1.3; }
-        .subtitle { text-align: center; color: #999; margin-bottom: 25px; font-size: 12px; }
-        #loginScreen { display: block; }
-        #appScreen { display: none; }
-        .user-badge { background: #e9ecef; padding: 8px; border-radius: 8px; text-align: center; margin-bottom: 20px; font-weight: bold; color: #495057; font-size: 14px;}
-        .form-group { margin-bottom: 20px; }
-        label { display: block; color: #555; font-weight: 600; margin-bottom: 8px; font-size: 13px; }
-        select, textarea, input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; transition: border-color 0.3s; }
-        select:focus, textarea:focus, input:focus { outline: none; border-color: #667eea; }
-        .filter-box { background: #f1f3f9; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #667eea; }
-        .info-box { background: #f8f9fa; border-left: 4px solid #667eea; padding: 12px; margin-bottom: 20px; border-radius: 0 8px 8px 0; display: none; font-size: 14px; }
-        .info-box p { margin-bottom: 5px; color: #444; }
-        button, .btn-call, .btn-link { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; text-align: center; text-decoration: none; display: block; }
-        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .btn-link { background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%); color: white; margin-bottom: 20px; }
-        .btn-call { background: linear-gradient(135deg, #28a745 0%, #218838 100%); color: white; display: none; }
-        .btn-abort { background: #dc3545; color: white; display: none; } 
-        .btn-next { background: #28a745; color: white; }
-        .btn-cancel { background: #f0f0f0; color: #666; }
-        .message { margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-size: 13px; display: none; }
-        .message.success { background: #d4edda; color: #155724; display: block; }
-        .message.error { background: #f8d7da; color: #721c24; display: block; }
-        .loading { display: none; text-align: center; margin-top: 15px; }
-        .spinner { border: 3px solid #f3f3f3; border-top: 3px solid #667eea; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .search-overlay {
-            display: none;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            z-index: 10;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            backdrop-filter: blur(2px);
-        }
-        .search-overlay p { margin-top: 12px; font-weight: 600; color: #764ba2; font-size: 14px; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesa de Entrega - Souvenirs</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería de Escáner QR -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <div id="searchLoading" class="search-overlay">
-            <div class="spinner"></div>
-            <p id="overlayText">Buscando...</p>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2.5 rounded-lg">
+                    <i class="fa-solid fa-gift text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">Mesa de Entrega de Souvenirs</h1>
+                    <p class="text-xs text-indigo-200">Conectado a Base de Datos en Tiempo Real</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="autorregistro.html" target="_blank" class="px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-id-card mr-1"></i> Abrir Enlace de Autorregistro <i class="fa-solid fa-external-link text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+        
+        <!-- Estadísticas Rápidas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase text-slate-400">Total Entregados</p>
+                    <h3 id="stat-total" class="text-2xl font-bold text-slate-700 mt-1">0</h3>
+                </div>
+                <div class="bg-indigo-50 text-indigo-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-box-open text-xl"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase text-slate-400">Pre-registrados en Fila</p>
+                    <h3 id="stat-pending" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                </div>
+                <div class="bg-amber-50 text-amber-600 p-3 rounded-xl">
+                    <i class="fa-solid fa-users text-xl"></i>
+                </div>
+            </div>
         </div>
 
-        <!-- PANTALLA DE LOGIN -->
-        <div id="loginScreen">
-            <h1>🔒 Acceso al Sistema</h1>
-            <p class="subtitle">Ingresa tus credenciales para continuar</p>
-            <form onsubmit="iniciarSesion(event)">
-                <div class="form-group"><label>Usuario</label><input type="text" id="loginUser" required></div>
-                <div class="form-group"><label>Contraseña</label><input type="password" id="loginPass" required></div>
-                <button type="submit" class="btn-primary">Ingresar</button>
-            </form>
-            <div id="loginMessage" class="message"></div>
-            <div class="loading" id="loginLoading"><div class="spinner"></div><p style="margin-top:10px;">Validando y cargando base de datos...</p></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Formulario de Entrega -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center">
+                    <i class="fa-solid fa-id-card text-indigo-600 mr-2"></i> Registrar Entrega
+                </h2>
+
+                <div id="alert-box" class="hidden p-3 rounded-xl mb-4 text-sm font-medium"></div>
+
+                <form id="delivery-form" onsubmit="handleDelivery(event)" class="space-y-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Cédula o Código QR</label>
+                            <button type="button" onclick="openScannerModal()" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-camera"></i> Escanear QR
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-barcode"></i>
+                            </span>
+                            <input type="text" id="input-search-id" required placeholder="Número de cédula o código" 
+                                class="w-full pl-10 pr-24 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition">
+                            <button type="button" onclick="searchPreRegistered()" class="absolute right-1 top-1 bottom-1 px-3 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-xs font-bold rounded-lg transition">
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nombre Completo</label>
+                        <input type="text" id="input-name" required placeholder="Nombre del asistente" 
+                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Teléfono / Contacto</label>
+                        <input type="tel" id="input-phone" placeholder="Ej. 3001234567" 
+                            class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Foto de Evidencia</label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="openCameraModal()" class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-camera text-indigo-600"></i> Tomar Foto
+                            </button>
+                            <label class="flex-1 py-2 px-3 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl text-xs font-semibold text-slate-700 transition flex items-center justify-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-upload text-indigo-600"></i> Subir Archivo
+                                <input type="file" id="input-photo-file" accept="image/*" class="hidden" onchange="handleFileSelected(event)">
+                            </label>
+                        </div>
+                        <div id="photo-preview-container" class="hidden mt-3 relative w-20 h-20 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                            <img id="photo-preview-img" src="" alt="Preview" class="w-full h-full object-cover">
+                            <button type="button" onclick="clearPhoto()" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-700">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm shadow-indigo-200 transition">
+                        <i class="fa-solid fa-check mr-2"></i> Confirmar Entrega
+                    </button>
+                </form>
+            </div>
+
+            <!-- Listas -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 flex flex-col">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                        <i class="fa-solid fa-list-check text-indigo-600 mr-2"></i> Historial y Fila de Espera
+                    </h2>
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <input type="text" id="input-filter" oninput="renderTables()" placeholder="Buscar por cédula o nombre..." 
+                            class="w-full sm:w-60 px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <button onclick="exportToCSV()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-excel"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-4">
+                    <button onclick="switchSubTable('delivered')" id="subtab-delivered" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-50 text-indigo-700">
+                        Entregados (<span id="count-delivered">0</span>)
+                    </button>
+                    <button onclick="switchSubTable('pending')" id="subtab-pending" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-slate-100 text-slate-600">
+                        Pre-registrados en Fila (<span id="count-pending-list">0</span>)
+                    </button>
+                </div>
+
+                <!-- Tabla Entregados -->
+                <div id="table-container-delivered" class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                                <th class="py-2.5 px-3">Foto</th>
+                                <th class="py-2.5 px-3">Cédula</th>
+                                <th class="py-2.5 px-3">Nombre</th>
+                                <th class="py-2.5 px-3">Fecha</th>
+                                <th class="py-2.5 px-3 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="delivered-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
+
+                <!-- Tabla Pendientes -->
+                <div id="table-container-pending" class="overflow-x-auto flex-grow hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-slate-400 text-[11px] font-bold uppercase tracking-wider">
+                                <th class="py-2.5 px-3">Foto</th>
+                                <th class="py-2.5 px-3">Cédula / Código</th>
+                                <th class="py-2.5 px-3">Nombre</th>
+                                <th class="py-2.5 px-3">Teléfono</th>
+                                <th class="py-2.5 px-3 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-tbody" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <!-- PANTALLA PRINCIPAL -->
-        <div id="appScreen">
-            <h1>📞 Contact Center</h1>
-            <div class="user-badge" id="displayUsuario"></div>
-            
-            <a href="#" target="_blank" id="btnBaseDatos" class="btn-link" style="display: none;">📊 Ver Base de Datos</a>
-
-            <div class="filter-box">
-                <label style="color: #764ba2;">🔍 Filtrar por Cargo</label>
-                <select id="cargoFilter" onchange="aplicarFiltroCargo()" disabled><option>Cargando cargos...</option></select>
+    <!-- Modales -->
+    <div id="scanner-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden flex flex-col">
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm">Escanear QR</h3>
+                <button onclick="closeScannerModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-
-            <div class="form-group">
-                <label>🔍 Buscar por Cédula, Celular o Nombre (ej: car co za)</label>
-                <input type="text" id="searchBar" placeholder="Escribe cédula, celular o nombre..." oninput="debounceBuscar()" disabled>
+            <div class="p-4 bg-slate-900"><div id="qr-reader" class="w-full"></div></div>
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <button onclick="closeScannerModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">Cerrar</button>
             </div>
-
-            <div class="form-group">
-                <label>Seleccionar Candidato</label>
-                <select id="contactoSelect" onchange="seleccionarContacto()" disabled><option>Cargando candidatos...</option></select>
-            </div>
-            
-            <div class="info-box" id="infoBox">
-                <p><strong>Cargo:</strong> <span id="lblCargo" style="color: #764ba2; font-weight: bold;"></span></p>
-                <p><strong>Documento:</strong> <span id="lblDoc"></span></p>
-                <p><strong>Teléfono:</strong> <span id="lblTel"></span></p>
-            </div>
-
-            <!-- BOTONES DE ACCIÓN -->
-            <a href="#" class="btn-call" id="btnCall" onclick="iniciarLlamada(event)">☎️ Iniciar Llamada</a>
-            <button type="button" class="btn-abort" id="btnAbort" onclick="abortarSeleccion()">❌ Cancelar Gestión</button>
-            
-            <div id="paso2" style="display:none;">
-                <div class="form-group">
-                    <label style="color: #28a745; margin-bottom:10px;">Llamada en progreso a las: <br><strong><span id="horaDisplay"></span></strong></label>
-                    
-                    <label style="color: #764ba2;">📋 Lista de Estados</label>
-                    <select id="listaEstado" style="margin-bottom: 15px;">
-                        <option value="NO CONTESTA">NO CONTESTA</option>
-                        <option value="BUZÓN / CORREO">BUZÓN / CORREO</option>
-                        <option value="INTERESADO">INTERESADO</option>
-                        <option value="FUERA DE SERVICIO">FUERA DE SERVICIO</option>
-                        <option value="NO LE INTERESA">NO LE INTERESA</option>
-                        <option value="NUMERO EQUIVOCADO">NUMERO EQUIVOCADO</option>
-                        <option value="NUMERO ERRADO">NUMERO ERRADO</option>
-                        <option value="CITADO">CITADO</option>
-                        <option value="LABORANDO">LABORANDO</option>
-                        <option value="REINGRESO">REINGRESO</option>
-                        <option value="ACTIVO GLA">ACTIVO GLA</option>
-                        <option value="SIN NUMERO">SIN NUMERO</option>
-                        <option value="RECHAZADA">RECHAZADA</option>
-                    </select>
-
-                    <label>Observación</label>
-                    <textarea id="observacion" placeholder="Escribe aquí los comentarios de la llamada..."></textarea>
-                </div>
-                <div class="form-group" style="display: none;">
-                    <label>Novedad</label>
-                    <input type="text" id="novedad" value="Ok">
-                </div>
-                <button type="button" class="btn-next" onclick="guardarYSiguiente()">Guardar y Finalizar ⏭️</button>
-                <button type="button" class="btn-cancel" onclick="cancelarLlamada()">Cancelar Llamada</button>
-            </div>
-            
-            <div id="appMessage" class="message"></div>
-            <div class="loading" id="appLoading"><div class="spinner"></div><p id="loadingText" style="margin-top: 10px;">Procesando...</p></div>
         </div>
     </div>
-    
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpDI5qaieCNlcQkSmSxqN4k8H_SIDYyNbeatBvzXpiIThQ881cQX2_FB5CXGX56Ukf/exec';
-        
-        let contactosData = [], contactosFiltrados = [], contactoActual = null, currentUser = "";
-        let horaLlamadaExacta = "";
-        let debounceTimer;
 
-        function iniciarSesion(e) {
-            e.preventDefault();
-            document.getElementById('loginMessage').style.display = 'none';
-            document.getElementById('loginLoading').style.display = 'block';
+    <div id="camera-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden flex flex-col">
+            <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm">Tomar Foto</h3>
+                <button onclick="closeCameraModal()"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-4 bg-black relative flex justify-center"><video id="camera-video" autoplay playsinline class="w-full max-h-72 object-cover rounded-xl"></video><canvas id="camera-canvas" class="hidden"></canvas></div>
+            <div class="p-4 bg-slate-50 border-t flex justify-end gap-2">
+                <button onclick="closeCameraModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">Cancelar</button>
+                <button onclick="capturePhoto()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl">Capturar</button>
+            </div>
+        </div>
+    </div>
 
-            fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ 
-                    accion: "login", 
-                    usuario: document.getElementById('loginUser').value, 
-                    password: document.getElementById('loginPass').value,
-                    cargarDatosInmediato: true 
-                }) 
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.resultado === 'exito') {
-                    currentUser = data.usuario;
-                    document.getElementById('displayUsuario').textContent = "Usuario activo: " + currentUser;
-                    if(data.mostrarLink && data.urlBaseDatos) {
-                        const btnDb = document.getElementById('btnBaseDatos');
-                        btnDb.href = data.urlBaseDatos;
-                        btnDb.style.display = 'block';
-                    }
-                    
-                    ejecutarDescargaContactos();
-                } else {
-                    document.getElementById('loginLoading').style.display = 'none';
-                    let msg = document.getElementById('loginMessage');
-                    msg.textContent = data.mensaje;
-                    msg.className = "message error";
+    <div id="photo-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-4 text-center">
+            <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-sm">Evidencia</h3><button onclick="closePhotoModal()"><i class="fa-solid fa-xmark"></i></button></div>
+            <img id="modal-img-display" src="" class="max-h-80 rounded-lg mx-auto">
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ========================================================
+        // REEMPLAZA ESTE BLOQUE CON TUS CREDENCIALES REALES DE FIREBASE
+        // ========================================================
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_DOMINIO.firebaseapp.com",
+            databaseURL: "https://TU_BASE_DE_DATOS.firebaseio.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_BUCKET.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let deliveredData = {};
+        let pendingData = {};
+        let currentPhotoData = null;
+        let html5QrCode = null;
+        let mediaStream = null;
+
+        onValue(ref(db, 'delivered'), (snapshot) => {
+            deliveredData = snapshot.val() || {};
+            renderTables();
+            updateStats();
+        });
+
+        onValue(ref(db, 'pending'), (snapshot) => {
+            pendingData = snapshot.val() || {};
+            renderTables();
+            updateStats();
+        });
+
+        window.switchSubTable = function(sub) {
+            document.getElementById('table-container-delivered').classList.toggle('hidden', sub !== 'delivered');
+            document.getElementById('table-container-pending').classList.toggle('hidden', sub !== 'pending');
+            document.getElementById('subtab-delivered').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition ${sub === 'delivered' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-600'}`;
+            document.getElementById('subtab-pending').className = `px-3 py-1.5 rounded-lg text-xs font-bold transition ${sub === 'pending' ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-600'}`;
+        };
+
+        window.searchPreRegistered = function() {
+            const val = document.getElementById('input-search-id').value.trim();
+            if (!val) return showAlert('Ingresa una cédula o código.', 'error');
+
+            const isDelivered = Object.values(deliveredData).some(item => item.id === val || item.code === val);
+            if (isDelivered) return showAlert('¡RESTRICCIÓN! Este usuario ya recibió su souvenir.', 'error');
+
+            const foundKey = Object.keys(pendingData).find(key => pendingData[key].id === val || pendingData[key].code === val);
+            if (foundKey) {
+                const found = pendingData[foundKey];
+                document.getElementById('input-name').value = found.name;
+                document.getElementById('input-phone').value = found.phone || '';
+                if (found.photo) {
+                    currentPhotoData = found.photo;
+                    document.getElementById('photo-preview-img').src = found.photo;
+                    document.getElementById('photo-preview-container').classList.remove('hidden');
                 }
-            }).catch(err => {
-                document.getElementById('loginLoading').style.display = 'none';
-                alert("Error de conexión al validar credenciales.");
-            });
-        }
-
-        function ejecutarDescargaContactos() {
-            fetch(SCRIPT_URL)
-            .then(res => res.json())
-            .then(data => {
-                contactosData = data.sort(() => 0.5 - Math.random()); 
-                contactosFiltrados = contactosData;
-                
-                actualizarSelectorCargos();
-                refrescarListaLocal(contactosFiltrados);
-                
-                document.getElementById('loginLoading').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appScreen').style.display = 'block';
-                
-                document.getElementById('cargoFilter').disabled = false;
-                document.getElementById('searchBar').disabled = false;
-                document.getElementById('contactoSelect').disabled = false;
-            }).catch(err => {
-                document.getElementById('loginLoading').style.display = 'none';
-                alert("Error cargando la lista de candidatos.");
-            });
-        }
-
-        function actualizarSelectorCargos() {
-            let cargos = [...new Set(contactosData.map(c => c.cargo ? String(c.cargo).trim() : "Sin cargo"))].sort();
-            let html = '<option value="TODOS">🌍 -- VER TODOS LOS CARGOS --</option>';
-            cargos.forEach(c => html += `<option value="${c}">${c}</option>`);
-            document.getElementById('cargoFilter').innerHTML = html;
-        }
-
-        function aplicarFiltroCargo() {
-            document.getElementById('searchBar').value = ""; 
-            let val = document.getElementById('cargoFilter').value;
-            contactosFiltrados = (val === "TODOS") ? contactosData : contactosData.filter(c => (c.cargo ? String(c.cargo).trim() : "Sin cargo") === val);
-            refrescarListaLocal(contactosFiltrados);
-            reiniciarInterfaz(false);
-        }
-
-        function debounceBuscar() {
-            document.getElementById('overlayText').textContent = "Buscando coincidencias...";
-            document.getElementById('searchLoading').style.display = 'flex';
-            
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                filtrarPorTexto();
-            }, 250); 
-        }
-
-        function filtrarPorTexto() {
-            let query = document.getElementById('searchBar').value.trim().toLowerCase();
-            if (!query) {
-                refrescarListaLocal(contactosFiltrados);
-                document.getElementById('searchLoading').style.display = 'none';
-                return;
+                showAlert('¡Encontrado en pre-registro! Datos cargados.', 'success');
+            } else {
+                showAlert('No hay pre-registro previo. Puedes registrarlo manualmente.', 'warning');
             }
+        };
 
-            let partes = query.split(/\s+/);
-            let regexString = "^" + partes.map(p => p.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join(".*?\\b");
-            let regexNombre = new RegExp(regexString, "i");
+        window.handleDelivery = function(event) {
+            event.preventDefault();
+            const idVal = document.getElementById('input-search-id').value.trim();
+            const nameVal = document.getElementById('input-name').value.trim();
+            const phoneVal = document.getElementById('input-phone').value.trim();
 
-            let resultados = contactosFiltrados.filter(c => {
-                let nombre = c.nombre ? String(c.nombre).trim().toLowerCase() : "";
-                let documento = c.documento ? String(c.documento).trim() : "";
-                let telefono = c.telefono ? String(c.telefono).trim() : ""; 
-                
-                return documento.includes(query) || telefono.includes(query) || regexNombre.test(nombre);
+            const isDelivered = Object.values(deliveredData).some(item => item.id === idVal);
+            if (isDelivered) return showAlert('¡RESTRICCIÓN! Esta cédula ya tiene un souvenir entregado.', 'error');
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            push(ref(db, 'delivered'), {
+                id: idVal,
+                code: idVal,
+                name: nameVal,
+                phone: phoneVal,
+                photo: currentPhotoData || '',
+                date: dateStr
             });
 
-            refrescarListaLocal(resultados);
-            document.getElementById('searchLoading').style.display = 'none';
-        }
+            Object.keys(pendingData).forEach(key => {
+                if (pendingData[key].id === idVal || pendingData[key].code === idVal) {
+                    remove(ref(db, `pending/${key}`));
+                }
+            });
 
-        function refrescarListaLocal(datosAMostrar) {
-            let sel = document.getElementById('contactoSelect');
-            if(datosAMostrar.length === 0){
-                sel.innerHTML = '<option value="">Sin referencias u coincidencias</option>';
-                return;
+            showAlert(`¡Souvenir entregado a ${nameVal}!`, 'success');
+            document.getElementById('delivery-form').reset();
+            window.clearPhoto();
+        };
+
+        window.deliverFromPending = function(id) {
+            const foundKey = Object.keys(pendingData).find(key => pendingData[key].id === id || pendingData[key].code === id);
+            if (!foundKey) return;
+            const item = pendingData[foundKey];
+
+            document.getElementById('input-search-id').value = item.id;
+            document.getElementById('input-name').value = item.name;
+            document.getElementById('input-phone').value = item.phone || '';
+            if (item.photo) {
+                currentPhotoData = item.photo;
+                document.getElementById('photo-preview-img').src = item.photo;
+                document.getElementById('photo-preview-container').classList.remove('hidden');
             }
-            
-            let fragmento = `<option value="">-- Selecciona un Candidato (${datosAMostrar.length}) --</option>`;
-            
-            let limiteMaximo = datosAMostrar.length > 800 ? datosAMostrar.slice(0, 800) : datosAMostrar;
-            
-            limiteMaximo.forEach(c => {
-                fragmento += `<option value="${c.fila}">${c.nombre}</option>`;
-            });
-            
-            if(datosAMostrar.length > 800) {
-                fragmento += `<option value="" disabled>...Use la barra de búsqueda para ver los restantes...</option>`;
+            showAlert(`Datos cargados para entrega rápida de ${item.name}.`, 'success');
+        };
+
+        window.deleteDelivered = function(firebaseKey) {
+            if (confirm('¿Eliminar este registro?')) {
+                remove(ref(db, `delivered/${firebaseKey}`));
             }
+        };
+
+        function renderTables() {
+            const filterText = (document.getElementById('input-filter')?.value || '').toLowerCase();
             
-            sel.innerHTML = fragmento;
+            const delEntries = Object.entries(deliveredData).reverse();
+            const filteredDel = delEntries.filter(([k, item]) => item.name.toLowerCase().includes(filterText) || item.id.toLowerCase().includes(filterText));
+            document.getElementById('count-delivered').textContent = delEntries.length;
+
+            document.getElementById('delivered-tbody').innerHTML = filteredDel.length === 0 ? `<tr><td colspan="5" class="py-6 text-center text-slate-400 text-xs">Sin registros.</td></tr>` :
+                filteredDel.map(([key, item]) => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-2.5 px-3">${item.photo ? `<img src="${item.photo}" onclick="openPhotoModal('${item.photo}')" class="w-10 h-10 rounded-lg object-cover cursor-pointer border">` : 'Sin foto'}</td>
+                        <td class="py-2.5 px-3 font-semibold text-slate-700">${item.id}</td>
+                        <td class="py-2.5 px-3 text-slate-800">${item.name}</td>
+                        <td class="py-2.5 px-3 text-slate-500 text-xs">${item.date}</td>
+                        <td class="py-2.5 px-3 text-right"><button onclick="deleteDelivered('${key}')" class="p-1.5 bg-red-50 text-red-600 rounded-lg text-xs"><i class="fa-solid fa-trash-can"></i></button></td>
+                    </tr>
+                `).join('');
+
+            const penEntries = Object.entries(pendingData).reverse();
+            const filteredPen = penEntries.filter(([k, item]) => item.name.toLowerCase().includes(filterText) || item.id.toLowerCase().includes(filterText));
+            document.getElementById('count-pending-list').textContent = penEntries.length;
+
+            document.getElementById('pending-tbody').innerHTML = filteredPen.length === 0 ? `<tr><td colspan="5" class="py-6 text-center text-slate-400 text-xs">No hay pre-registros.</td></tr>` :
+                filteredPen.map(([key, item]) => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-2.5 px-3">${item.photo ? `<img src="${item.photo}" onclick="openPhotoModal('${item.photo}')" class="w-10 h-10 rounded-lg object-cover cursor-pointer border">` : 'Sin foto'}</td>
+                        <td class="py-2.5 px-3 font-semibold text-indigo-600">${item.id} <span class="text-xs text-slate-400 block">(${item.code})</span></td>
+                        <td class="py-2.5 px-3 text-slate-800">${item.name}</td>
+                        <td class="py-2.5 px-3 text-slate-500 text-xs">${item.phone || 'N/A'}</td>
+                        <td class="py-2.5 px-3 text-right"><button onclick="deliverFromPending('${item.id}')" class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-bold">Entregar</button></td>
+                    </tr>
+                `).join('');
         }
 
-        function seleccionarContacto() {
-            let val = document.getElementById('contactoSelect').value;
-            if(!val) { reiniciarInterfaz(false); return; }
-            
-            contactoActual = contactosData.find(c => c.fila == val);
-            document.getElementById('lblCargo').textContent = contactoActual.cargo || "No especificado";
-            document.getElementById('lblDoc').textContent = contactoActual.documento;
-            document.getElementById('lblTel').textContent = contactoActual.telefono;
-            document.getElementById('btnCall').href = "tel:" + contactoActual.telefono;
-            
-            document.getElementById('infoBox').style.display = 'block';
-            document.getElementById('btnCall').style.display = 'block';
-            document.getElementById('btnAbort').style.display = 'block'; 
+        function updateStats() {
+            document.getElementById('stat-total').textContent = Object.keys(deliveredData).length;
+            document.getElementById('stat-pending').textContent = Object.keys(pendingData).length;
         }
 
-        function iniciarLlamada(e) {
-            if(!contactoActual) return;
-            let fecha = new Date();
-            horaLlamadaExacta = fecha.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit', hour12: true });
-            document.getElementById('horaDisplay').textContent = horaLlamadaExacta;
-            
-            document.getElementById('btnCall').style.display = 'none';
-            document.getElementById('btnAbort').style.display = 'none'; 
-            document.getElementById('contactoSelect').disabled = true;
-            document.getElementById('cargoFilter').disabled = true;
-            document.getElementById('searchBar').disabled = true; 
-            document.getElementById('paso2').style.display = 'block';
-            
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "bloquear", fila: contactoActual.fila, usuario_call: currentUser }) });
-        }
+        window.openScannerModal = function() {
+            document.getElementById('scanner-modal').classList.remove('hidden');
+            html5QrCode = new Html5Qrcode("qr-reader");
+            html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, (text) => {
+                document.getElementById('input-search-id').value = text;
+                window.closeScannerModal();
+                window.searchPreRegistered();
+            }).catch(() => alert("No se pudo abrir la cámara."));
+        };
 
-        function abortarSeleccion() {
-            if(!contactoActual) return;
-            document.getElementById('loadingText').textContent = "Liberando...";
-            document.getElementById('appLoading').style.display = 'block';
-            document.getElementById('btnCall').style.display = 'none';
-            document.getElementById('btnAbort').style.display = 'none';
+        window.closeScannerModal = function() {
+            if (html5QrCode) html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
+            document.getElementById('scanner-modal').classList.add('hidden');
+        };
 
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "desbloquear", fila: contactoActual.fila }) })
-            .then(() => {
-                document.getElementById('appLoading').style.display = 'none';
-                reiniciarInterfaz(true); 
-            });
-        }
+        window.openCameraModal = async function() {
+            document.getElementById('camera-modal').classList.remove('hidden');
+            mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            document.getElementById('camera-video').srcObject = mediaStream;
+        };
 
-        function guardarYSiguiente() {
-            document.getElementById('loadingText').textContent = "Guardando...";
-            document.getElementById('appLoading').style.display = 'block';
-            document.getElementById('paso2').style.display = 'none';
+        window.closeCameraModal = function() {
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-modal').classList.add('hidden');
+        };
 
-            let payload = {
-                accion: "guardar",
-                fila: contactoActual.fila,
-                hora: horaLlamadaExacta,
-                observacion: document.getElementById('observacion').value,
-                novedad: document.getElementById('novedad').value, 
-                usuario_call: currentUser,
-                lista: document.getElementById('listaEstado').value 
+        window.capturePhoto = function() {
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            canvas.width = 300; canvas.height = (video.videoHeight * 300) / video.videoWidth;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            currentPhotoData = canvas.toDataURL('image/jpeg', 0.7);
+            document.getElementById('photo-preview-img').src = currentPhotoData;
+            document.getElementById('photo-preview-container').classList.remove('hidden');
+            window.closeCameraModal();
+        };
+
+        window.clearPhoto = function() {
+            currentPhotoData = null;
+            document.getElementById('photo-preview-container').classList.add('hidden');
+            document.getElementById('input-photo-file').value = '';
+        };
+
+        window.handleFileSelected = function(e) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 300; canvas.height = (img.height * 300) / img.width;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    currentPhotoData = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('photo-preview-img').src = currentPhotoData;
+                    document.getElementById('photo-preview-container').classList.remove('hidden');
+                };
+                img.src = event.target.result;
             };
+            reader.readAsDataURL(e.target.files[0]);
+        };
 
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-            .then(res => res.json())
-            .then(() => {
-                document.getElementById('appLoading').style.display = 'none';
-                
-                contactosData = contactosData.filter(c => c.fila !== contactoActual.fila);
-                let filtroActual = document.getElementById('cargoFilter').value;
-                contactosFiltrados = (filtroActual === "TODOS") ? contactosData : contactosData.filter(c => (c.cargo ? String(c.cargo).trim() : "Sin cargo") === filtroActual);
-                
-                document.getElementById('searchBar').value = ""; 
-                refrescarListaLocal(contactosFiltrados);
-                reiniciarInterfaz(true);
-            });
-        }
+        window.openPhotoModal = function(url) {
+            document.getElementById('modal-img-display').src = url;
+            document.getElementById('photo-modal').classList.remove('hidden');
+        };
+        window.closePhotoModal = function() { document.getElementById('photo-modal').classList.add('hidden'); };
 
-        function cancelarLlamada() {
-            document.getElementById('loadingText').textContent = "Liberando...";
-            document.getElementById('appLoading').style.display = 'block';
-            document.getElementById('paso2').style.display = 'none';
+        window.showAlert = function(msg, type) {
+            const box = document.getElementById('alert-box');
+            box.className = `p-3 rounded-xl mb-4 text-sm font-medium border flex items-center gap-2 ${type === 'success' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : type === 'error' ? 'bg-red-50 text-red-800 border-red-200' : 'bg-amber-50 text-amber-800 border-amber-200'}`;
+            box.innerHTML = `<span>${msg}</span>`;
+            setTimeout(() => box.classList.add('hidden'), 6000);
+        };
 
-            fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: "desbloquear", fila: contactoActual.fila }) })
-            .then(() => {
-                document.getElementById('appLoading').style.display = 'none';
-                reiniciarInterfaz(true);
-            });
-        }
-
-        function reiniciarInterfaz(desbloquearFiltros) {
-            if(desbloquearFiltros) {
-                document.getElementById('cargoFilter').disabled = false;
-                document.getElementById('searchBar').disabled = false;
-                document.getElementById('contactoSelect').disabled = false;
-            }
-            document.getElementById('contactoSelect').value = "";
-            document.getElementById('infoBox').style.display = 'none';
-            document.getElementById('btnCall').style.display = 'none';
-            document.getElementById('btnAbort').style.display = 'none'; 
-            document.getElementById('btnCall').href = "#";
-            document.getElementById('paso2').style.display = 'none';
-            document.getElementById('observacion').value = "";
-            document.getElementById('novedad').value = "Ok"; 
-            document.getElementById('listaEstado').value = "NO CONTESTA"; 
-            contactoActual = null;
-            horaLlamadaExacta = "";
-        }
+        window.exportToCSV = function() {
+            const delEntries = Object.values(deliveredData);
+            if (delEntries.length === 0) return alert('No hay registros.');
+            let csv = "\uFEFFCedula,Nombre,Telefono,Fecha\n" + delEntries.map(i => `"${i.id}","${i.name}","${i.phone || ''}","${i.date}"`).join("\n");
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `entregas_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        };
     </script>
 </body>
 </html>
